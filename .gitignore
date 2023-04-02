@@ -1,2 +1,3 @@
 /venv
 /backend/chromedriver.exe
+/backend/.env
