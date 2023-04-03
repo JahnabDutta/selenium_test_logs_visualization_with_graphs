@@ -1,7 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import json
-from .db import connect, create_table, insert
+from db import collection
+from datetime import datetime
 import os
 from dotenv import load_dotenv
 env_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -16,17 +17,6 @@ enterprise_xml = '//*[@id="header"]/nav/div/div/div[2]/div/div/div[1]/a[1]'
 pricing_xml = '//*[@id="header"]/nav/div/div/div[2]/div/div/div[1]/a[2]'
 
 paths = [home_xml,platforms_xml,enterprise_xml,pricing_xml]
-
-db_host = os.getenv("DB_HOST")
-db_user = os.getenv("DB_USER")
-db_password = os.getenv("DB_PASSWORD")
-db_database = os.getenv("DB_DATABASE")
-
-
-conn = connect(db_host,db_user,db_password,db_database)
-create_table(conn)
-
-
 
 
 class Scrapper:
@@ -58,26 +48,20 @@ scrapper  = Scrapper(web_driver_path)
 scrapper.get_page(website_link)
 scrapper.maximize_window()
 
-itr = 5
+itr = 2
 while itr:
     for path in paths:
         scrapper.find_element(by="xpath",value=path).click()
         logs = scrapper.get_logs()
         for entry in logs:
-            if 'Network.response' in entry['message']:
-                response = entry['message']['params']['response']
-                request = entry['message']['params']['request']
-                insert(
-                    conn,
-                    response['timestamp'],
-                    response['url'],
-                    request['method'],
-                    response['status'],
-                    response['mimeType'],
-                    json.dumps(request['headers']),
-                    json.dumps(response['headers']),
-                    request['postData']['text'] if 'postData' in request else None,
-                    response['body']['text'] if 'body' in response else None
-                )
+            #convert the string to json
+            json_entry = json.loads(entry['message'])
 
+            
+            with open('logs.json','a') as f:
+                f.write(json.dumps(json_entry,indent=4))
+                f.write('\n')
+
+            collection.insert_one(json_entry)
     itr-=1
+

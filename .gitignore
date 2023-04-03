@@ -1,3 +1,5 @@
 /venv
 /backend/chromedriver.exe
 /backend/.env
+/backend/__pycache__
+/back
