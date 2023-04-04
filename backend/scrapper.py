@@ -1,12 +1,9 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import json
-from db import collection
+from db import collection, es_client
 from datetime import datetime
-import os
-from dotenv import load_dotenv
-env_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path=env_path)
+
 
 web_driver_path = "chromedriver.exe"
 website_link = "https://www.lambdatest.com"
@@ -54,14 +51,8 @@ while itr:
         scrapper.find_element(by="xpath",value=path).click()
         logs = scrapper.get_logs()
         for entry in logs:
-            #convert the string to json
-            json_entry = json.loads(entry['message'])
-
+            message = entry['message']
+            collection.insert_one(json.loads(message))
             
-            with open('logs.json','a') as f:
-                f.write(json.dumps(json_entry,indent=4))
-                f.write('\n')
-
-            collection.insert_one(json_entry)
     itr-=1
 
