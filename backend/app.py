@@ -2,9 +2,13 @@ from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from db import collection
 from datetime import datetime
+#import cors
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 api = Api(app)
+CORS(app)
 
 
 # api end points-
@@ -54,6 +58,15 @@ def get_logs_by_key(collection,key):
                 logs_by_status[status] = {}
     return logs_by_status
 
+def equalize_logs(logs_by_key,logs_by_day):
+    for key in logs_by_key:
+        for day in logs_by_day:
+            if day not in logs_by_key[key]:
+                logs_by_key[key][day] = 0
+    return logs_by_key
+
+
+    return logs_by_status
 class GetAllLogs(Resource):
     def get(self):
         logs_by_day = get_logs_by_day(collection)
@@ -62,12 +75,14 @@ class GetAllLogs(Resource):
 class GetLogsByStatusCode(Resource):
     def get(self):
         logs_by_status = get_logs_by_key(collection,"status")
+        logs_by_status = equalize_logs(logs_by_status,get_logs_by_day(collection))
         return jsonify(logs_by_status)
 
 
 class GetLogsByMimeType(Resource):
     def get(self):
         logs_by_mime = get_logs_by_key(collection,"mimeType")
+        logs_by_mime = equalize_logs(logs_by_mime,get_logs_by_day(collection))
         return jsonify(logs_by_mime)
 
 
@@ -77,9 +92,10 @@ class GetLogsBySomeKey(Resource):
         return jsonify(logs_by_key)
 
 
-api.add_resource(GetAllLogs, "/logs")
+
+api.add_resource(GetAllLogs, "/logs/all/")
 api.add_resource(GetLogsByStatusCode, "/logs/status/")
-api.add_resource(GetLogsByMimeType, "/logs/mime/")
+api.add_resource(GetLogsByMimeType, "/logs/mime-type/")
 api.add_resource(GetLogsBySomeKey, "/logs/<string:key>/")
 
 
