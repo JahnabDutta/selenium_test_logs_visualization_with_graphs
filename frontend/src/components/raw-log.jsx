@@ -1,11 +1,14 @@
 import React, {Component,useEffect,useState} from 'react';
 import {
-    Grid
+    Grid,Paper
 } from '@mui/material';
+import JsonView from 'react-json-view';
 const url = 'http://localhost:5000/';
+
 
 function RawLog({rawLog}) {
 
+   
     
 
     useEffect(() => {
@@ -21,7 +24,6 @@ function RawLog({rawLog}) {
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data =>{
-               
                 setRawData(data);
             })
             .catch(error => console.log(error));
@@ -33,17 +35,18 @@ function RawLog({rawLog}) {
     const [rawData,setRawData] = useState([]);
     
     return (
+        //make a div such that it takes up the whole screen and does not overflow
         <div>
-            {rawData.map((log) => {
-                return (
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <p>{log}</p>
-                        </Grid>
-                    </Grid>
-                )
-            })
-            }
+            <Grid container direction="row" spacing={2}>
+                <Grid item xs={12}>
+                    <h1>Raw Log</h1>
+                </Grid>
+                <Grid item xs={12}>
+                    <Paper>
+                        <JsonView src={rawData} />
+                    </Paper>
+                </Grid>
+            </Grid>
         </div>
     )
 }
