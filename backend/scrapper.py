@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.alert import Alert
 import json
 from db import collection, es_client
 from datetime import datetime
@@ -47,12 +48,14 @@ def main(itr=100):
     scrapper.get_page(website_link)
     scrapper.maximize_window()
 
-    
+
     while itr:
         for path in paths:
-            print("Clicking on path: " + path)
+            try:
+                Alert(scrapper.driver).accept()
+            except:
+                pass
             scrapper.find_element(by="xpath",value=path).click()
-            time.sleep(5)
             logs = scrapper.get_logs()
             for entry in logs:
                 message = entry['message']
@@ -61,4 +64,6 @@ def main(itr=100):
 
                 
         itr-=1
+    scrapper.quit()
+    
 
