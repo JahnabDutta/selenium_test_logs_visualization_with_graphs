@@ -3,17 +3,17 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import json
 from db import collection, es_client
 from datetime import datetime
+import time
 
 
 web_driver_path = "chromedriver.exe"
 website_link = "https://www.lambdatest.com"
 
-home_xml= '//*[@id="header"]/nav/div/div/div[1]/div/div/a'
-platforms_xml = '//*[@id="header"]/nav/div/div/div[2]/div/div/div[1]/div[1]/div[1]/a'
-enterprise_xml = '//*[@id="header"]/nav/div/div/div[2]/div/div/div[1]/a[1]'
-pricing_xml = '//*[@id="header"]/nav/div/div/div[2]/div/div/div[1]/a[2]'
+home_xml =          '/html/body/div[1]/header/nav/div/div/div[1]/div/div/a'
+platform_xml =      '/html/body/div[1]/header/nav/div/div/div[2]/div/div/div[1]/div[1]/div[1]/a'
+pricing_xml =    '/html/body/div[1]/header/nav/div/div/div[2]/div/div/div[1]/a[1]'
 
-paths = [home_xml,platforms_xml,enterprise_xml,pricing_xml]
+paths = [home_xml,platform_xml,pricing_xml]
 
 
 class Scrapper:
@@ -41,18 +41,24 @@ class Scrapper:
 
 
 
-scrapper  = Scrapper(web_driver_path)
-scrapper.get_page(website_link)
-scrapper.maximize_window()
 
-itr = 2
-while itr:
-    for path in paths:
-        scrapper.find_element(by="xpath",value=path).click()
-        logs = scrapper.get_logs()
-        for entry in logs:
-            message = entry['message']
-            collection.insert_one(json.loads(message))
+def main(itr=100):
+    scrapper  = Scrapper(web_driver_path)
+    scrapper.get_page(website_link)
+    scrapper.maximize_window()
+
+    
+    while itr:
+        for path in paths:
+            print("Clicking on path: " + path)
+            scrapper.find_element(by="xpath",value=path).click()
+            time.sleep(5)
+            logs = scrapper.get_logs()
+            for entry in logs:
+                message = entry['message']
+                collection.insert_one(json.loads(message))
             
-    itr-=1
+
+                
+        itr-=1
 
