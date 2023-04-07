@@ -1,5 +1,2 @@
-function defaultUrl() {
-    return ('http://localhost:5100/');
-}
-
-export default defaultUrl;
+const backendUrl = 'http://localhost:5000/';
+export default backendUrl;

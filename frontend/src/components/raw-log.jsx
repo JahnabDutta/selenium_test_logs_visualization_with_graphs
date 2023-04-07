@@ -3,13 +3,11 @@ import {
     Grid,Paper
 } from '@mui/material';
 import JsonView from 'react-json-view';
-const url = 'http://localhost:5000/';
-
+import backendUrl from '../backendUrl';
+const url = backendUrl;
 
 function RawLog({rawLog}) {
 
-   
-    
 
     useEffect(() => {
         if(rawLog === 'none' || rawLog === undefined || rawLog === null || rawLog === ''){

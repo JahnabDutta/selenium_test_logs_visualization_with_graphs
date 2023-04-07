@@ -6,9 +6,8 @@ import {
      Box
 } from '@mui/material';
 import { CategoryScale } from "chart.js";
-const url = 'http://localhost:5000/';
-
-
+import backendUrl from '../backendUrl';
+const url = backendUrl;
 Chart.register(CategoryScale);
 
 
