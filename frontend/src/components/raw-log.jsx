@@ -18,7 +18,6 @@ function RawLog({rawLog}) {
             headers: { 'Content-Type': 'application/json' },
         };
         const apiUrl = url + 'logs/raw/' + rawLog + '/';
-        console.log(apiUrl)
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data =>{

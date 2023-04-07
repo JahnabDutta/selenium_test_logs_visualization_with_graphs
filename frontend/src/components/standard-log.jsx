@@ -32,8 +32,7 @@ function StandardLog({standardLogType}) {
         if(standardLogType=== 'all'){
             const dates = Object.keys(data);
             const count = Object.values(data);
-            console.log(dates);
-            console.log(count);
+
             const graphData = {
                 labels: dates,
                 datasets: [
@@ -58,8 +57,7 @@ function StandardLog({standardLogType}) {
                 // get the values for each key
                 const dates = Object.keys(data[key]);
                 const count = Object.values(data[key]);
-                console.log(dates);
-                console.log(count);
+  
                 const dataset = {
                     label: key,
                     data: count,
@@ -85,7 +83,6 @@ function StandardLog({standardLogType}) {
             headers: { 'Content-Type': 'application/json' },
         };
         const apiUrl = url + 'logs/' + standardLogType + '/';
-        console.log(apiUrl)
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data =>{
@@ -124,10 +121,10 @@ function StandardLog({standardLogType}) {
                 <Grid item xs={12}>
                     <h1>{standardLogType}</h1>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item lg={6} sm={12}>
                     <Bar data={graphData} />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item lg={6} sm = {12}>
                     <Line data={graphData} />
                 </Grid>
             </Grid>

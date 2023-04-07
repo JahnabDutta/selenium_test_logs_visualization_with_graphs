@@ -11,25 +11,21 @@ function Home() {
   const [graph, setGraph] = useState("none");
   const [rawLog, setRawLog] = useState("none");
 
-  console.log(
-    "displayType: " + displayType,
-    "standardLogType: " + standardLogType,
-    "graph: " + graph,
-    "rawLog: " + rawLog
-  )
+
 
   return (
-    <div>
-      <Grid container direction="row">
-        <Grid item xs={2}>
+    <div style={({ height: "100vh" }, { display: "flex"})}>
+      
+      
           <SideBar
             setDisplayType={setDisplayType}
             setStandardLogType={setStandardLogType}
             setGraph={setGraph}
             setRawLog={setRawLog}
           />
-        </Grid>
-        <Grid item xs={10}>
+     
+        <Grid container direction="row" margin={2} padding={2}>
+        <Grid item xs={12}>
           {displayType === "welcome" && <h1>Welcome to the admin page</h1>}
           {displayType === "standard-log" && (
             <StandardLog standardLogType={standardLogType} />
