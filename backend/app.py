@@ -5,6 +5,14 @@ from db import collection
 from datetime import datetime
 from flask_cors import CORS
 from utils import *
+import os
+from dotenv import load_dotenv
+
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path=env_path)
+
+backend_host = os.getenv("BACKEND_HOST")
+backend_port = os.getenv("BACKEND_PORT")
 
 app = Flask(__name__)
 api = Api(app)
@@ -60,4 +68,4 @@ api.add_resource(GetRawLogs, "/logs/raw/<string:value>/")
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host = backend_host ,port = backend_port,debug=True)
