@@ -87,7 +87,6 @@ function StandardLog({standardLogType}) {
         fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(data =>{
-                console.log(data);
                 const graphData = makeGraphData(data,standardLogType);
                 setGraphData(graphData);
             })

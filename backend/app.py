@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import json
 from flask_restful import Api, Resource
 from db import collection
 from datetime import datetime
@@ -8,7 +9,9 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
-CORS(app)
+
+# allow cross origin requests
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 # api end points-
@@ -24,7 +27,7 @@ def get_key_val(doc,key):
             item = get_key_val(v,key)
             if item is not None:
                 return item
-
+       
     return None
 
 
@@ -66,7 +69,27 @@ def equalize_logs(logs_by_key,logs_by_day):
     return logs_by_key
 
 
-    return logs_by_status
+def check_if_contains(doc,value):
+   #recursively check if the key or the value matches the value
+    for k,v in doc.items():
+        if k == value or v == value:
+            return True
+        elif isinstance(v,dict):
+            if check_if_contains(v,value):
+                return True
+     
+    return False
+def get_raw_logs(collection,value):
+    raw_logs = []
+
+    for doc in collection.find():
+        contains = check_if_contains(doc,value)
+        if(contains):
+            doc = doc['message']
+            raw_logs.append(json.dumps(doc))
+    return raw_logs
+
+
 class GetAllLogs(Resource):
     def get(self):
         logs_by_day = get_logs_by_day(collection)
@@ -92,11 +115,17 @@ class GetLogsBySomeKey(Resource):
         return jsonify(logs_by_key)
 
 
+class GetRawLogs(Resource):
+    def get(self,value):
+        raw_logs = get_raw_logs(collection,value)
+        return jsonify(raw_logs)
+
 
 api.add_resource(GetAllLogs, "/logs/all/")
 api.add_resource(GetLogsByStatusCode, "/logs/status/")
 api.add_resource(GetLogsByMimeType, "/logs/mime-type/")
 api.add_resource(GetLogsBySomeKey, "/logs/<string:key>/")
+api.add_resource(GetRawLogs, "/logs/raw/<string:value>/")
 
 
 

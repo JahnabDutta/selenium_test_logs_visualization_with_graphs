@@ -7,9 +7,16 @@ import RawLog from "./raw-log";
 
 function Home() {
   const [displayType, setDisplayType] = useState("welcome");
-  const [standardLogType, setStandardLogType] = useState("");
-  const [graph, setGraph] = useState("");
-  const [rawLog, setRawLog] = useState("");
+  const [standardLogType, setStandardLogType] = useState("none");
+  const [graph, setGraph] = useState("none");
+  const [rawLog, setRawLog] = useState("none");
+
+  console.log(
+    "displayType: " + displayType,
+    "standardLogType: " + standardLogType,
+    "graph: " + graph,
+    "rawLog: " + rawLog
+  )
 
   return (
     <div>
